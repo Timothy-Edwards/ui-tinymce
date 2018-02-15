@@ -17,21 +17,24 @@ angular.module('ui.tinymce', [])
         if (!$window.tinymce) {
           return;
         }
-
         var ngModel = ctrls[0],
           form = ctrls[1] || null;
 
+        var lastSeenContent = null;
         var expression, options = {
           debounce: true
         }, tinyInstance,
           updateView = function(editor) {
+            // don't jump into any digest if the content is the same
             var content = editor.getContent({format: options.format}).trim();
-            content = $sce.trustAsHtml(content);
-
-            ngModel.$setViewValue(content);
-            if (!$rootScope.$$phase) {
-              scope.$digest();
+            if (lastSeenContent === content) {
+              return;
             }
+            lastSeenContent = content;
+            content = $sce.trustAsHtml(content);
+            scope.$evalAsync(function() {
+              ngModel.$setViewValue(content);
+            });
           };
 
         function toggleDisable(disabled) {
@@ -64,10 +67,10 @@ angular.module('ui.tinymce', [])
           return function(ed) {
 	        $timeout.cancel(debouncedUpdateTimer);
 	         debouncedUpdateTimer = $timeout(function() {
-              return (function(ed) {
-                if (ed.isDirty()) {
-                  ed.save();
-                  updateView(ed);
+              return (function(debouncedEditor) {
+                if (debouncedEditor.isDirty()) {
+                  debouncedEditor.save();
+                  updateView(debouncedEditor);
                 }
               })(ed);
             }, debouncedUpdateDelay);
@@ -102,11 +105,10 @@ angular.module('ui.tinymce', [])
             });
 
             ed.on('blur', function() {
-              element[0].blur();
-              ngModel.$setTouched();
-              if (!$rootScope.$$phase) {
-                scope.$digest();
-              }
+              scope.$evalAsync(function() {
+                element[0].blur();
+                ngModel.$setTouched();
+              });
             });
 
             ed.on('remove', function() {
