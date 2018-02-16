@@ -1,3 +1,9 @@
+## 0.0.19-accelo.1
+
+Fixes
+
+- Fix content disappearing in lists when pasting with power paste and then undoing content.
+
 ## 0.0.19-accelo
 
 Improvements
