@@ -94,8 +94,9 @@ angular.module('ui.tinymce', [])
             // - a button has been clicked [ExecCommand]
             // - the editor content has been modified [change]
             // - the node has changed [NodeChange]
+            // - after it has been filtered by the PowerPaste plugin [PastePostProcess]
             // - an object has been resized (table, image) [ObjectResized]
-            ed.on('ExecCommand change NodeChange ObjectResized', function() {
+            ed.on('PastePostProcess ExecCommand change NodeChange ObjectResized', function() {
               if (!options.debounce) {
                 ed.save();
                 updateView(ed);
