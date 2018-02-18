@@ -1,3 +1,9 @@
+## 0.0.19-accelo.2
+
+Improvement
+
+- Stop saving editor when the editor fires an event.
+
 ## 0.0.19-accelo.1
 
 Fixes
