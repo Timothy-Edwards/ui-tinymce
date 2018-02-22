@@ -26,7 +26,7 @@ angular.module('ui.tinymce', [])
         }, tinyInstance,
           updateView = function(editor) {
             // don't jump into any digest if the content is the same
-            var content = editor.getContent({format: options.format}).trim();
+            var content = editor.getContent({format: options.format, no_events: true}).trim();
             if (lastSeenContent === content) {
               return;
             }
@@ -70,8 +70,8 @@ angular.module('ui.tinymce', [])
               return (function(debouncedEditor) {
                 if (debouncedEditor.isDirty()) {
                   debouncedEditor.save();
-                  updateView(debouncedEditor);
                 }
+                updateView(debouncedEditor);
               })(ed);
             }, debouncedUpdateDelay);
           };
@@ -92,11 +92,15 @@ angular.module('ui.tinymce', [])
 
             // Update model when:
             // - a button has been clicked [ExecCommand]
+            // - the editor content has been with keystroke [KeyUp]
             // - the editor content has been modified [change]
             // - the node has changed [NodeChange]
             // - an object has been resized (table, image) [ObjectResized]
-            ed.on('ExecCommand change NodeChange ObjectResized', function() {
+            ed.on('ExecCommand change NodeChange ObjectResized KeyUp', function() {
               if (!options.debounce) {
+                if (ed.isDirty()) {
+                  ed.save();
+                } 
                 updateView(ed);
               	return;
               }
