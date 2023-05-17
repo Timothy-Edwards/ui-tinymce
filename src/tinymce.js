@@ -47,7 +47,7 @@ angular.module('ui.tinymce', [])
           } else {
             ensureInstance();
 
-            if (tinyInstance && !tinyInstance.editor.options.get('readonly') && tinyInstance.getDoc()) {
+            if (tinyInstance && !tinyInstance.options.get('readonly') && tinyInstance.getDoc()) {
               tinyInstance.getBody().setAttribute('contenteditable', true);
             }
           }
@@ -73,7 +73,7 @@ angular.module('ui.tinymce', [])
                 }
                 updateView(debouncedEditor);
               })(ed);
-            }, debouncedUpdateDelay);
+            }, debouncedUpdateDelay);OP
           };
         })(400);
 
