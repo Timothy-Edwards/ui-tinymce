@@ -73,7 +73,7 @@ angular.module('ui.tinymce', [])
                 }
                 updateView(debouncedEditor);
               })(ed);
-            }, debouncedUpdateDelay);OP
+            }, debouncedUpdateDelay);
           };
         })(400);
 
